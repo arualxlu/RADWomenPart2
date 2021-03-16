@@ -6,15 +6,13 @@ public class WeekTwoHomework {
    public static void contactAcctIndustry () {
 
         // Let's query some Opportunities and bring down account information as well
-        List < Contact > contactsAcctsInd = [SELECT ID, Name, AccountId, Account.Name, 
+                List < Contact > contactsAcctsInd = [SELECT ID, Name, AccountId, Account.Name, 
                                                 Account.Industry FROM Contact];
-Integer c = [select count() from contact];
-
-for (Integer i = 0; i<(c-1); i++)
+            
+for (Contact c: contactsAcctsInd)
 {
-     //   System.debug('The contact is: '+contactsAcctsInd[i]);
-        System.debug('The contact Account Name is: '+contactsAcctsInd[i].Account.Name+
-                     'in Industry: '+contactsAcctsInd[i].Account.Industry);
+        System.debug('The contact is: '+c.Name+' Account Name is: '+c.Account.Name+
+                     ' in Industry: '+c.Account.Industry);
 }
 
     }
@@ -29,15 +27,14 @@ for (Integer i = 0; i<(c-1); i++)
          
         Integer c = [select count() from opportunity where stagename = 'Closed Won'];
         
-for (Integer i = 0; i<(c-1); i++)
+for (Integer i = 0; i<3; i++)
 { 
-    for (Account acc:wonOpptys){
-    for (Opportunity opp:acc.Opportunities)
-    {
+    Opportunity[] opp = wonOpptys[c].Opportunities;
+    
+        {
              System.debug('The Opportunity name is: '+opp[i].Name);
 }
-    }
-    	}
+        	}
     }
     
 //A method that queries for Opportunity records that returns results in a map format.
@@ -45,18 +42,16 @@ for (Integer i = 0; i<(c-1); i++)
     {
         Map< ID, Opportunity > opptyRecMap = new Map <ID, Opportunity>
             ([SELECT ID, Name from Opportunity]);
-       // Integer c = [select count() from opportunity] ;
-       // for (Integer i = 0; i<(c-1); i++)
+       
             System.debug('Opportunity List: '+opptyRecMap);
     }
 //An aggregate results query that returns an integer equal to the total number of open opportunities in your org.
 
-    public static void openOpptyAmt()
+    public static void openOpptyCount()
     {
-        List<AggregateResult> openAmt = [SELECT sum(amount) total from Opportunity WHERE IsClosed = false];
-        for (AggregateResult ar: openAmt)
-        { System.debug('Open opptys total'+ar.get('total'));}
+        List<AggregateResult> openCount = [SELECT count(id) total from Opportunity WHERE IsClosed = false];
+        for (AggregateResult ar: openCount)
+        { System.debug('Open opptys count '+ar.get('total'));}
     }
     
 }
-
