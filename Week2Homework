@@ -24,16 +24,12 @@ for (Contact c: contactsAcctsInd)
         List < Account > wonOpptys = [SELECT ID, Name, (SELECT Name, StageName, Amount FROM
                                          Opportunities where stagename = 'Closed Won')
                                      FROM Account];
-         
-        Integer c = [select count() from opportunity where stagename = 'Closed Won'];
         
-for (Integer i = 0; i<3; i++)
-{ 
-    Opportunity[] opp = wonOpptys[c].Opportunities;
-    
-        {
-             System.debug('The Opportunity name is: '+opp[i].Name);
-}
+for (Account acct: wonOpptys)
+{ System.debug('Account is '+acct.Name);
+ 	for (Opportunity oppty: acct.Opportunities)
+    { System.debug('Opportunity is '+oppty.name);}
+        
         	}
     }
     
