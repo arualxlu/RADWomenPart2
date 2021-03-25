@@ -30,7 +30,7 @@ public with sharing class LeadTriggerHandler {
                     t.Type = 'Call'; 
                     t.Status = 'Not Started';
                     t.Subject = 'Follow up on '+L.ProductInterest__c;
-                    t.WhatId = Ld.Id;
+                    t.WhoId = Ld.Id;
                     t.Description = 'Please follow up with this new Lead';
                     taskList.add(t);
                     }
