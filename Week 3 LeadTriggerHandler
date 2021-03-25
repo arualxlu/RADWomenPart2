@@ -1,72 +1,41 @@
 public with sharing class LeadTriggerHandler {
-    // -----------Trigger Recursion Control------------------------------------------------------
-/*  public static boolean hasExecuted = false; //Has the Lead trigger already executed? -- The Trigger updates this variable when first run    
-    // -----------Trigger Handler Class Variables -----------------------------------------------
-    List<Lead> newLeads;
-    Map<ID, Lead> oldLeadMap;
-    // Constructor receives the leads being processed by this trigger and assigns them to class variables
-    public LeadTriggerHandler (List<Lead> newLeads, Map<ID, Lead> oldLeadMap) {
-        this.newLeads = newLeads;
-        this.oldLeadMap = oldLeadMap;
-    }
 
-/*    public void handleBeforeInsert(){
-               
-        }
-        //this is a before trigger, so our handler doesn't have to call DML
-    }
-*/
-/*    public void handleAfterInsert(){
-        
-        Id runningUserId = UserInfo.getUserId();
+    public static void handleAfterInsert(List<Lead> newList){
+        List<Task> taskList = new List<Task>();
 
         //Week 3 Demo: bulkify this code
-        for (Lead L : this.newLeads) {
+        for (Lead L : newList) {
             Task t = new Task();
             t.Priority = 'Normal';
             t.Type = 'Call'; 
             t.Status = 'Not Started';
-            t.Subject = 'Follow up on '+newLeads.ProductInterest__c;
+            t.Subject = 'Follow up on '+L.ProductInterest__c;
             t.WhatId = L.Id;
             t.Description = 'Please follow up with this new Lead';
-                  
-            insert t;
+            taskList.add(t);
         }
+        insert taskList;
     }
 
-    public void handleAfterUpdate(){
-         
-        Map<Id, Lead> LeadsUpdated = new Map<Id, Lead>(
-            [SELECT Id FROM Lead WHERE Id IN :this.newLeads and productinterest__c.size != 0
-            and newLeads.productinterest__c != oldLeadMap.productinterest__c]
-        );
-        //did productinterest get updated record.txt_Field__c.size() == 0
-        for (Lead updatedLead : this.newLeads) {
+    public static void handleAfterUpdate(List<Lead> newList, List<Lead> oldList){
+        
+        List<Task> taskList = new List<Task>();
 
-            Lead oldLead = this.oldLeadMap.get(updatedLead.Id);
-
-            //ok, now we have the new and old versions of the same record and we can make our comparison
-            if (oldLead.ProductInterest__c != updatedlead.ProductInterest__c)  {
-        set integer changeCount;
-                changeCount = 1;
-                System.debug('Lead product interest updated from' + oldLead.ProductInterest__c + ' to ' + updatedlead.ProductInterest__c );
-
-                if (LeadsUpdated.get(updatedLead.Id).changeCount == 0) {
-                    
-                    for (Lead L : this.newLeads) {
-            Task t = new Task();
-            t.Priority = 'Normal';
-            t.Type = 'Call'; 
-            t.Status = 'Not Started';
-            t.Subject = 'Follow up on '+newLeads.ProductInterest__c;
-            t.WhatId = L.Id;
-            t.Description = 'Please follow up with this new Lead';
-                  
-            insert t;
-        }
+        //Week 3 Demo: bulkify this code
+        for (Lead L : newList) {
+            for(Lead Ld : oldList){
+                if(L.ProductInterest__c != Ld.ProductInterest__c ){
+                    Task t = new Task();
+                    t.Priority = 'Normal';
+                    t.Type = 'Call'; 
+                    t.Status = 'Not Started';
+                    t.Subject = 'Follow up on '+L.ProductInterest__c;
+                    t.WhatId = Ld.Id;
+                    t.Description = 'Please follow up with this new Lead';
+                    taskList.add(t);
+                    }
                 }
             }
-        }
-
-    }*/
+        insert taskList;
+    }
 }
